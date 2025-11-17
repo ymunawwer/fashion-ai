@@ -1,6 +1,6 @@
 import mongoose, { Model, Document } from 'mongoose';
 import { QueryResult } from '../paginate/paginate';
-import { AccessAndRefreshTokens } from '../token/token.interfaces';
+// import { AccessAndRefreshTokens } from '../token/token.interfaces';
 
 export interface IUser {
   name: string;
@@ -9,6 +9,7 @@ export interface IUser {
   role: any;
   isEmailVerified: boolean;
   permission:any;
+  username:string;
 }
 
 export interface IUserDoc extends IUser, Document {
@@ -28,5 +29,5 @@ export type NewCreatedUser = Omit<IUser, 'isEmailVerified'>;
 
 export interface IUserWithTokens {
   user: IUserDoc;
-  tokens: AccessAndRefreshTokens;
+  // tokens: AccessAndRefreshTokens;
 }

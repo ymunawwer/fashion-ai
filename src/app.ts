@@ -8,11 +8,12 @@ import passport from 'passport';
 import httpStatus from 'http-status';
 import config from './config/config';
 import { morgan } from './modules/logger';
-import { jwtStrategy } from './modules/auth';
+// import { jwtStrategy } from './modules/auth';
 import { authLimiter } from './modules/utils';
 import { ApiError, errorConverter, errorHandler } from './modules/errors';
 import routes from './routes/v1';
-import {getNestedMenuItems} from './modules/moduleMaster/module.service'
+// import {getNestedMenuItems} from './modules/moduleMaster/module.service';
+
 const app: Express = express();
 
 if (config.env !== 'test') {
@@ -22,9 +23,9 @@ if (config.env !== 'test') {
 
 // set security HTTP headers
 app.use(helmet());
-getNestedMenuItems().then(data=>{
-  console.log("data--",JSON.stringify(data))
-})
+// getNestedMenuItems().then((data:any)=>{
+//   console.log("data--",JSON.stringify(data))
+// })
 // enable cors
 app.use(cors());
 app.options('*', cors());
@@ -38,13 +39,14 @@ app.use(express.urlencoded({ extended: true }));
 // sanitize request data
 app.use(xss());
 app.use(ExpressMongoSanitize());
+// app.use(verifyTokenMiddleware())
 
 // gzip compression
 app.use(compression());
 
 // jwt authentication
 app.use(passport.initialize());
-passport.use('jwt', jwtStrategy);
+// passport.use('jwt', jwtStrategy);
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
@@ -52,7 +54,7 @@ if (config.env === 'production') {
 }
 
 // v1 api routes
-app.use('/v1/lsa', routes);
+app.use('/v1/lifestyle',routes);
 
 // send back a 404 error for any unknown api request
 app.use((_req, _res, next) => {

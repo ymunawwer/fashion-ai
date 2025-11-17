@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
-import authRoute from './auth.route';
+import outfitRoute from './outfit.route';
 import docsRoute from './swagger.route';
-import userRoute from './user.route';
-import permissionRoute from './permission.route';
+import wardrobeRoute from './wardrobe.route';
+// import permissionRoute from './permission.route';
+// import licenceRoute from './licence.route';
 import config from '../../config/config';
-
+// import {verifyTokenMiddleware} from '../../modules/auth/test.service';
 const router = express.Router();
 
 interface IRoute {
@@ -14,17 +15,21 @@ interface IRoute {
 
 const defaultIRoute: IRoute[] = [
   {
-    path: '/auth',
-    route: authRoute,
+    path: '/outfit',
+    route: outfitRoute,
   },
   {
-    path: '/users',
-    route: userRoute,
+    path: '/wardrobe',
+    route: wardrobeRoute,
   },
-  {
-    path: '/permission',
-    route: permissionRoute,
-  },
+  // {
+  //   path: '/permission',
+  //   route: permissionRoute,
+  // },
+  // {
+  //   path: '/licence',
+  //   route: licenceRoute,
+  // },
 ];
 
 const devIRoute: IRoute[] = [
