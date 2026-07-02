@@ -4,10 +4,12 @@ import { OutfitService } from "./outfit.service";
 export class OutfitController {
   static async create(req: Request, res: Response) {
     try {
-      const outfit = await OutfitService.createOutfit(req.body);
-      res.status(201).json(outfit);
+      const userId = req.headers['x-id'] as string;
+      if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+      const outfit = await OutfitService.createOutfit(req.body, userId);
+      return res.status(201).json(outfit);
     } catch (err: any) {
-      res.status(400).json({ error: err.message });
+      return res.status(400).json({ error: err.message });
     }
   }
 
@@ -15,7 +17,9 @@ export class OutfitController {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID is required" });
-      const outfit = await OutfitService.getOutfitById(id);
+        const userId = req.headers['x-id'] as string;
+        if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+      const outfit = await OutfitService.getOutfitById(id, userId);
       if (!outfit) return res.status(404).json({ message: "Not found" });
       return res.json(outfit);
     } catch (err: any) {
@@ -25,10 +29,12 @@ export class OutfitController {
 
   static async getAll(req: Request, res: Response) {
     try {
-      const outfits = await OutfitService.getAllOutfits(req.query);
-      res.json(outfits);
+      const userId = req.headers['x-id'] as string;
+      if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+      const outfits = await OutfitService.getAllOutfits(req.query, userId);
+      return res.json(outfits);
     } catch (err: any) {
-      res.status(400).json({ error: err.message });
+      return res.status(400).json({ error: err.message });
     }
   }
 
@@ -36,7 +42,9 @@ export class OutfitController {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID is required" });
-      const outfit = await OutfitService.updateOutfit(id, req.body);
+        const userId = req.headers['x-id'] as string;
+        if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+      const outfit = await OutfitService.updateOutfit(id, req.body, userId);
       return res.json(outfit);
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
@@ -47,7 +55,9 @@ export class OutfitController {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID is required" });
-      const outfit = await OutfitService.deleteOutfit(id);
+        const userId = req.headers['x-id'] as string;
+        if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+      const outfit = await OutfitService.deleteOutfit(id, userId);
       return res.json(outfit);
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
@@ -58,7 +68,9 @@ export class OutfitController {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID is required" });
-      const outfit = await OutfitService.toggleFavourite(id, req.body.fav);
+        const userId = req.headers['x-id'] as string;
+        if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+      const outfit = await OutfitService.toggleFavourite(id, req.body.fav, userId);
       return res.json(outfit);
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
@@ -68,46 +80,57 @@ export class OutfitController {
   static async findBySeasonAndOccasion(req: Request, res: Response) {
     try {
       const { season, occasion } = req.query;
+      const userId = req.headers['x-id'] as string;
+      if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
       const outfits = await OutfitService.findBySeasonAndOccasion(
         season as string,
-        occasion as string
+        occasion as string,
+        userId
       );
-      res.json(outfits);
+      return res.json(outfits);
     } catch (err: any) {
-      res.status(400).json({ error: err.message });
+      return res.status(400).json({ error: err.message });
     }
   }
 
   // GET /outfit/searchFilters?color=Red&priceMax=2000&season=Summer&occasion=Wedding
 static async searchFilters(req: Request, res: Response) {
-    const outfits = await OutfitService.findOutfitsByWardrobeFilters(req.query);
-    res.json(outfits);
+    const userId = req.headers['x-id'] as string;
+    if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
+    const outfits = await OutfitService.findOutfitsByWardrobeFilters(req.query, userId);
+    return res.json(outfits);
   }
   
   // GET /outfit/AIRecommended?limit=5
   static async AIRecommended(req: Request, res: Response) {
+    const userId = req.headers['x-id'] as string;
+    if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
     const limit = parseInt(req.query["limit"] as string) || 10;
-    const outfits = await OutfitService.findAIRecommendedOutfits(limit);
-    res.json(outfits);
+    const outfits = await OutfitService.findAIRecommendedOutfits(limit, userId);
+    return res.json(outfits);
   }
   
   // GET /outfit/frequent?type=rare&limit=5
   static async frequent(req: Request, res: Response) {
+    const userId = req.headers['x-id'] as string;
+    if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
     const limit = parseInt(req.query["limit"] as string) || 10;
     const frequent = req.query["type"] !== "rare";
-    const outfits = await OutfitService.getFrequentOrRareOutfits(limit, frequent);
-    res.json(outfits);
+    const outfits = await OutfitService.getFrequentOrRareOutfits(limit, frequent, userId);
+    return res.json(outfits);
   }
   
   // GET /outfit/weather?temperature=35&rain=true
   static async weather(req: Request, res: Response) {
+    const userId = req.headers['x-id'] as string;
+    if (!userId) return res.status(401).json({ error: "User ID required in x-id header" });
     const filters = {
       temperature: req.query["temperature"] ? parseInt(req.query["temperature"]  as string) : 0,
       rain: req.query["rain"] === "true",
       wind: req.query["wind"] === "true",
     };
-    const outfits = await OutfitService.findWeatherOutfits(filters);
-    res.json(outfits);
+    const outfits = await OutfitService.findWeatherOutfits(filters, userId);
+    return res.json(outfits);
   }
   
 }

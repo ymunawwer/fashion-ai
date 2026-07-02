@@ -1,37 +1,37 @@
 import Outfit, { OutfitDocument } from "./outfit.model";
 
 export class OutfitService {
-  static async createOutfit(data: Partial<OutfitDocument>) {
-    const outfit = new Outfit(data);
+  static async createOutfit(data: Partial<OutfitDocument>, userId: string) {
+    const outfit = new Outfit({ ...data, createdBy: userId });
     return outfit.save();
   }
 
-  static async getOutfitById(id: string) {
-    return Outfit.findById(id)
+  static async getOutfitById(id: string, userId: string) {
+    return Outfit.findOne({ _id: id, createdBy: userId })
     // .notDeleted()
     .populate("items.item");
   }
 
-  static async getAllOutfits(filter: any = {}) {
-    return Outfit.find(filter)
+  static async getAllOutfits(filter: any = {}, userId: string) {
+    return Outfit.find({ ...filter, createdBy: userId })
     // .notDeleted()
     .populate("items.item");
   }
 
-  static async updateOutfit(id: string, data: Partial<OutfitDocument>) {
-    return Outfit.findByIdAndUpdate(id, data, { new: true });
+  static async updateOutfit(id: string, data: Partial<OutfitDocument>, userId: string) {
+    return Outfit.findOneAndUpdate({ _id: id, createdBy: userId }, data, { new: true });
   }
 
-  static async deleteOutfit(id: string) {
-    return Outfit.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  static async deleteOutfit(id: string, userId: string) {
+    return Outfit.findOneAndUpdate({ _id: id, createdBy: userId }, { isDeleted: true }, { new: true });
   }
 
-  static async toggleFavourite(id: string, fav: boolean) {
-    return Outfit.findByIdAndUpdate(id, { isFavourite: fav }, { new: true });
+  static async toggleFavourite(id: string, fav: boolean, userId: string) {
+    return Outfit.findOneAndUpdate({ _id: id, createdBy: userId }, { isFavourite: fav }, { new: true });
   }
 
-  static async findBySeasonAndOccasion(season: string, occasion: string) {
-    return Outfit.find({ season, occasion })
+  static async findBySeasonAndOccasion(season: string, occasion: string, userId: string) {
+    return Outfit.find({ season, occasion, createdBy: userId })
     // .notDeleted()
     .populate("items.item");
   }
@@ -46,8 +46,8 @@ export class OutfitService {
     priceMax?: number;
     season?: string;
     occasion?: string;
-  }) {
-    return Outfit.find()
+  }, userId: string) {
+    return Outfit.find({ createdBy: userId })
     //   .notDeleted()
       .populate({
         path: "items.item",
@@ -65,8 +65,8 @@ export class OutfitService {
     /**
    * 2️⃣ AI recommended outfits based on styleScore or embedding
    */
-    static async findAIRecommendedOutfits(limit: number = 10) {
-        return Outfit.find({ "aiFeatures.recommendedByAI": true })
+    static async findAIRecommendedOutfits(limit: number = 10, userId: string) {
+        return Outfit.find({ "aiFeatures.recommendedByAI": true, createdBy: userId })
         //   .notDeleted()
           .sort({ "aiFeatures.styleScore": -1 })
           .limit(limit)
@@ -76,8 +76,8 @@ export class OutfitService {
         /**
    * 3️⃣ Most worn / least worn outfits
    */
-  static async getFrequentOrRareOutfits(limit: number = 10, frequent: boolean = true) {
-    return Outfit.find()
+  static async getFrequentOrRareOutfits(limit: number = 10, frequent: boolean = true, userId: string) {
+    return Outfit.find({ createdBy: userId })
     // .notDeleted()
     .sort({ wearCount: frequent ? -1 : 1 }).limit(limit);
   }
@@ -85,8 +85,8 @@ export class OutfitService {
     temperature?: number;
     rain?: boolean;
     wind?: boolean;
-  }) {
-    const query: any = { isDeleted: false };
+  }, userId: string) {
+    const query: any = { isDeleted: false, createdBy: userId };
     if (filters.temperature !== undefined) {
       query["weatherSuitability.temperatureRange"] = { $exists: true, $ne: null };
     }

@@ -2,31 +2,31 @@ import Wardrobe, { WardrobeDocument } from "./wardrobe.model";
 
 export class WardrobeService {
   // Create new wardrobe item
-  static async createWardrobe(data: Partial<WardrobeDocument>) {
+  static async createWardrobe(data: Partial<WardrobeDocument>, userId: string) {
     
-    const item = new Wardrobe(data);
+    const item = new Wardrobe({ ...data, createdBy: userId });
     return item.save();
   }
 
   // Get wardrobe by ID
-  static async getWardrobeById(id: string) {
-    return Wardrobe.findById(id).notDeleted();
+  static async getWardrobeById(id: string, userId: string) {
+    return Wardrobe.findOne({ _id: id, createdBy: userId }).notDeleted();
   }
 
   // Get all items (with filters)
-  static async getAllWardrobes(filter: any = {}) {
-    return Wardrobe.find({...filter,isDeleted:false})
+  static async getAllWardrobes(filter: any = {}, userId: string) {
+    return Wardrobe.find({...filter, createdBy: userId, isDeleted:false})
     // .notDeleted();
   }
 
   // Update wardrobe
-  static async updateWardrobe(id: string, data: Partial<WardrobeDocument>) {
-    return Wardrobe.findByIdAndUpdate(id, data, { new: true });
+  static async updateWardrobe(id: string, data: Partial<WardrobeDocument>, userId: string) {
+    return Wardrobe.findOneAndUpdate({ _id: id, createdBy: userId }, data, { new: true });
   }
 
   // Soft delete wardrobe
-  static async deleteWardrobe(id: string) {
-    return Wardrobe.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  static async deleteWardrobe(id: string, userId: string) {
+    return Wardrobe.findOneAndUpdate({ _id: id, createdBy: userId }, { isDeleted: true }, { new: true });
   }
 
   // Mark as favourite
@@ -35,15 +35,15 @@ export class WardrobeService {
 //   }
 
   // Find by AI recommendation or tags
-  static async findSimilar(id: string) {
-    const item = await Wardrobe.findById(id);
+  static async findSimilar(id: string, userId: string) {
+    const item = await Wardrobe.findOne({ _id: id, createdBy: userId });
     if (!item || !item.tags?.length) return [];
-    return Wardrobe.find({ _id: { $ne: id }, tags: { $in: item.tags } }).limit(10);
+    return Wardrobe.find({ _id: { $ne: id }, createdBy: userId, tags: { $in: item.tags } }).limit(10);
   }
 
     // 1. Find least/frequently worn items
-    static async getFrequentOrRareItems(limit: number = 10, frequent: boolean = true) {
-        return Wardrobe.find()
+    static async getFrequentOrRareItems(limit: number = 10, frequent: boolean = true, userId: string) {
+        return Wardrobe.find({ createdBy: userId })
         //   .notDeleted()
           .sort({ wearCount: frequent ? -1 : 1 })
           .limit(limit);
@@ -56,8 +56,8 @@ export class WardrobeService {
     priceMin?: number;
     priceMax?: number;
     tags?: string[];
-  }) {
-    const query: any = { isDeleted: false };
+  }, userId: string) {
+    const query: any = { isDeleted: false, createdBy: userId };
     if (filters.color) query.color = filters.color;
     if (filters.category) query.category = filters.category;
     if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
@@ -70,18 +70,18 @@ export class WardrobeService {
   }
 
   // 3. AI-based similarity search (tags or embedding)
-  static async findSimilarAI(itemId: string, limit: number = 10) {
-    const item = await Wardrobe.findById(itemId);
+  static async findSimilarAI(itemId: string, userId: string, limit: number = 10) {
+    const item = await Wardrobe.findOne({ _id: itemId, createdBy: userId });
     if (!item) return [];
 
     // Simple tag-based similarity for now
     const tagQuery = item.tags?.length ? { tags: { $in: item.tags } } : {};
-    return Wardrobe.find({ _id: { $ne: itemId }, ...tagQuery }).limit(limit);
+    return Wardrobe.find({ _id: { $ne: itemId }, createdBy: userId, ...tagQuery }).limit(limit);
   }
 
    // Toggle isFavourite
-   static async toggleFavourite(id: string) {
-    const wardrobeItem = await Wardrobe.findById(id);
+   static async toggleFavourite(id: string, userId: string) {
+    const wardrobeItem = await Wardrobe.findOne({ _id: id, createdBy: userId });
     if (!wardrobeItem) throw new Error("Wardrobe item not found");
 
     wardrobeItem.isFavourite = !wardrobeItem.isFavourite;
