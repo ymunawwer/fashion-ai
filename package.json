@@ -10,7 +10,6 @@
   },
   "author": "linus wafula saisi <saisilinus.work@gmail.com>",
   "license": "MIT",
-  "type": "module",
   "engines": {
     "node": ">=14.20.1 <19"
   },
@@ -63,7 +62,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
-    "@faker-js/faker": "^6.2.0",
+    "@faker-js/faker": "^10.5.0",
     "@jest/globals": "^27.5.1",
     "@ryansonshine/commitizen": "^4.2.8",
     "@ryansonshine/cz-conventional-changelog": "^3.3.4",
@@ -73,7 +72,7 @@
     "@types/cors": "2.8.8",
     "@types/express": "^4.17.13",
     "@types/express-rate-limit": "^5.1.3",
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.11.12",
     "@types/nodemailer": "^6.4.4",
@@ -95,15 +94,14 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-security": "^1.4.0",
     "husky": "^7.0.4",
-    "jest": "^27.4.4",
+    "jest": "^30.4.2",
     "lint-staged": "^12.1.2",
     "node-mocks-http": "^1.11.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.5.1",
     "standard-version": "^9.3.2",
     "supertest": "^6.1.6",
-    "ts-jest": "^27.1.3",
-    "typescript": "^4.5.4"
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@types/multer": "^1.4.11",
@@ -123,7 +121,6 @@
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "mongoose": "^7.0.2",
-    "mongoose-auto-increment": "^5.0.1",
     "morgan": "^1.10.0",
     "nodemailer": "^6.7.2",
     "passport": "^0.6.0",
