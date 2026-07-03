@@ -54,8 +54,9 @@ interface IOutfit {
     if (this.isModified("lastWorn")) this.wearCount = (this.wearCount || 0) + 1;
     
     if (this.isNew) { // Only for new documents
-      // Get the next sequence number for outfit
-      const seq = await getNextSequence('test', 'outfit');
+      // Get the next sequence number for outfit using createdBy
+      const userId = this.createdBy ? this.createdBy.toString() : 'default';
+      const seq = await getNextSequence(userId, 'outfit');
       this.code = String(seq);
     }
     

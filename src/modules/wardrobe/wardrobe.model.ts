@@ -135,13 +135,11 @@ wardrobeSchema.query.favourites = function (this: QueryWithHelpers<any, Wardrobe
 wardrobeSchema.pre("save",async function(next) {
   if (this.isModified("lastWorn")) this.wearCount = (this.wearCount || 0) + 1;
   if (this.isNew) { // Only for new documents
-  
-      
-      // Get the next sequence number for this user --this.createdBy.toString()
-      const seq = await getNextSequence('test','wardrobe');
+      // Get the next sequence number for this user using createdBy
+      const userId = this.createdBy ? this.createdBy.toString() : 'default';
+      const seq = await getNextSequence(userId, 'wardrobe');
       this.code = String(seq);
-    
-}
+  }
   next();
 });
 
