@@ -9,6 +9,8 @@ export class OutfitController {
       const outfit = await OutfitService.createOutfit(req.body, userId);
       return res.status(201).json(outfit);
     } catch (err: any) {
+      console.log("Outfit creation error:", JSON.stringify(err));
+      console.log("Error message:", err.message);
       return res.status(400).json({ error: err.message });
     }
   }
