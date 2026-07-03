@@ -2,7 +2,24 @@ import Outfit, { OutfitDocument } from "./outfit.model";
 
 export class OutfitService {
   static async createOutfit(data: Partial<OutfitDocument>, userId: string) {
-    const outfit = new Outfit({ ...data, createdBy: userId });
+    // Normalize items field if it's a string or array of strings
+    let normalizedData = { ...data };
+    if (data.items) {
+      if (typeof data.items === 'string') {
+        // Single string ID - convert to array of objects
+        normalizedData.items = [{ item: data.items as any }];
+      } else if (Array.isArray(data.items)) {
+        // Check if items are strings and convert to objects
+        normalizedData.items = data.items.map((item: any) => {
+          if (typeof item === 'string') {
+            return { item };
+          }
+          return item;
+        }) as any;
+      }
+    }
+    
+    const outfit = new Outfit({ ...normalizedData, createdBy: userId });
     return outfit.save();
   }
 

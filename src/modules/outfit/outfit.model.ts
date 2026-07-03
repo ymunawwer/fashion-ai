@@ -27,7 +27,7 @@ interface IOutfit {
   
   const outfitSchema = new mongoose.Schema<OutfitDocument, OutfitModel>(
     {
-      code: { type: String, required: true, unique: true },
+      code: { type: String, unique: true },
       name: { type: String, required: true, trim: true },
       description: String,
       items: [{ item: { type: mongoose.Schema.Types.ObjectId, ref: "Wardrobe", required: true }, notes: String }],
