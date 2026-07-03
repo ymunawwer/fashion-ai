@@ -1,4 +1,5 @@
 import mongoose, { Model } from "mongoose";
+import { getNextSequence } from "../counter/counter.model";
 
 interface IOutfit {
     code: string;
@@ -49,8 +50,15 @@ interface IOutfit {
   );
   
   /* Hooks */
-  outfitSchema.pre("save", function(next) {
+  outfitSchema.pre("save", async function(next) {
     if (this.isModified("lastWorn")) this.wearCount = (this.wearCount || 0) + 1;
+    
+    if (this.isNew) { // Only for new documents
+      // Get the next sequence number for outfit
+      const seq = await getNextSequence('test', 'outfit');
+      this.code = String(seq);
+    }
+    
     next();
   });
   
