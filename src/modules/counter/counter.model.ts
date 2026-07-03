@@ -14,10 +14,10 @@ const counterSchema = new Schema<ICounter>({
 
 const Counter = mongoose.model<ICounter>('Counter', counterSchema);
 
-export const getNextSequence = async (userId: string,type:string): Promise<number> => {
-  const counterId = `wardrobe_${userId}`;
+export const getNextSequence = async (userId: string, type: string): Promise<number> => {
+  const counterId = `${type}_${userId}`;
   const counter = await Counter.findOneAndUpdate(
-    { _id:counterId,type:type },
+    { _id: counterId, type: type },
     { $inc: { seq: 1 } },
     { new: true, upsert: true, setDefaultsOnInsert: true }
   );
