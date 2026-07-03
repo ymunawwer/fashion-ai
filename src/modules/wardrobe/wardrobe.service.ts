@@ -15,7 +15,24 @@ export class WardrobeService {
 
   // Get all items (with filters)
   static async getAllWardrobes(filter: any = {}, userId: string) {
-    return Wardrobe.find({...filter, createdBy: userId, isDeleted:false})
+    const { q, ...otherFilters } = filter;
+    const query: any = { ...otherFilters, createdBy: userId, isDeleted: false };
+    
+    // Handle text search with 'q' parameter
+    if (q) {
+      query.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+        { category: { $regex: q, $options: 'i' } },
+        { subCategory: { $regex: q, $options: 'i' } },
+        { brand: { $regex: q, $options: 'i' } },
+        { tags: { $regex: q, $options: 'i' } },
+        { color: { $regex: q, $options: 'i' } },
+        { material: { $regex: q, $options: 'i' } }
+      ];
+    }
+    
+    return Wardrobe.find(query);
     // .notDeleted();
   }
 

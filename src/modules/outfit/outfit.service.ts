@@ -13,7 +13,21 @@ export class OutfitService {
   }
 
   static async getAllOutfits(filter: any = {}, userId: string) {
-    return Outfit.find({ ...filter, createdBy: userId })
+    const { q, ...otherFilters } = filter;
+    const query: any = { ...otherFilters, createdBy: userId };
+    
+    // Handle text search with 'q' parameter
+    if (q) {
+      query.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+        { category: { $regex: q, $options: 'i' } },
+        { occasion: { $regex: q, $options: 'i' } },
+        { tags: { $regex: q, $options: 'i' } }
+      ];
+    }
+    
+    return Outfit.find(query)
     // .notDeleted()
     .populate("items.item");
   }
