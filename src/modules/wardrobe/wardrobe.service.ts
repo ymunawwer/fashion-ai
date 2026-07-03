@@ -29,10 +29,10 @@ export class WardrobeService {
         { tags: { $regex: q, $options: 'i' } },
         { color: { $regex: q, $options: 'i' } },
         { material: { $regex: q, $options: 'i' } },
-        { season: { $in: [{ $regex: q, $options: 'i' }] } },
-        { occasions: { $in: [{ $regex: q, $options: 'i' }] } },
+        { season: { $regex: q, $options: 'i' } },
+        { occasions: { $regex: q, $options: 'i' } },
         { condition: { $regex: q, $options: 'i' } },
-        { tags: { $in: [{ $regex: q, $options: 'i' }] } }
+        { tags: { $regex: q, $options: 'i' } }
       ];
     }
     
