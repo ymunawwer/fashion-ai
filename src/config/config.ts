@@ -65,6 +65,13 @@ const config = {
     from: envVars.EMAIL_FROM,
   },
   clientUrl: envVars.CLIENT_URL,
+  loyalty: {
+    apiUrl: envVars.LOYALTY_API_URL,
+    licenseKey: envVars.LOYALTY_LICENSE_KEY,
+    appId: envVars.LOYALTY_APP_ID || 'MODORA',
+  },
 };
+
+
 
 export default config;

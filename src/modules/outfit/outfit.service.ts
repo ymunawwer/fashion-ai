@@ -1,4 +1,5 @@
 import Outfit, { OutfitDocument } from "./outfit.model";
+import LoyaltyService from "../loyalty/loyalty.service";
 
 export class OutfitService {
   static async createOutfit(data: Partial<OutfitDocument>, userId: string) {
@@ -20,7 +21,15 @@ export class OutfitService {
     }
     
     const outfit = new Outfit({ ...normalizedData, createdBy: userId });
-    return outfit.save();
+    const savedOutfit = await outfit.save();
+    
+    // Track loyalty event for outfit addition
+    await LoyaltyService.trackOutfitAdded(
+      savedOutfit._id.toString(),
+      userId
+    );
+    
+    return savedOutfit;
   }
 
   static async getOutfitById(id: string, userId: string) {

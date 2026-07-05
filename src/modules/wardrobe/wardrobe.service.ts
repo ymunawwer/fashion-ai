@@ -1,11 +1,20 @@
 import Wardrobe, { WardrobeDocument } from "./wardrobe.model";
+import LoyaltyService from "../loyalty/loyalty.service";
 
 export class WardrobeService {
   // Create new wardrobe item
   static async createWardrobe(data: Partial<WardrobeDocument>, userId: string) {
     
     const item = new Wardrobe({ ...data, createdBy: userId });
-    return item.save();
+    const savedItem = await item.save();
+    
+    // Track loyalty event for wardrobe addition
+    await LoyaltyService.trackWardrobeAdded(
+      savedItem._id.toString(),
+      userId
+    );
+    
+    return savedItem;
   }
 
   // Get wardrobe by ID
