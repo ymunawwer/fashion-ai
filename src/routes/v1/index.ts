@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import outfitRoute from './outfit.route';
 import docsRoute from './swagger.route';
 import wardrobeRoute from './wardrobe.route';
+import loyaltyRoute from './loyalty.route';
 // import permissionRoute from './permission.route';
 // import licenceRoute from './licence.route';
 import config from '../../config/config';
@@ -21,6 +22,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/wardrobe',
     route: wardrobeRoute,
+  },
+  {
+    path: '/loyalty',
+    route: loyaltyRoute,
   },
   // {
   //   path: '/permission',

@@ -70,6 +70,35 @@ export class LoyaltyService {
       userId
     );
   }
+
+  static async getBalance(userId: string): Promise<any> {
+    try {
+      if (!config.loyalty.apiUrl || !config.loyalty.licenseKey) {
+        throw new Error('Loyalty API not configured');
+      }
+
+      const url = `${config.loyalty.apiUrl}/api/v1/loyalty/balance`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'x-license-key': config.loyalty.licenseKey,
+          'x-id': userId,
+          'x-app-id': config.loyalty.appId,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Loyalty API error: ${response.status} ${errorText}`);
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error('Failed to fetch loyalty balance:', error.message);
+      throw error;
+    }
+  }
 }
 
 export default LoyaltyService;
